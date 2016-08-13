@@ -1,4 +1,4 @@
-$months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+MONTHS = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 def leap_year?(year)
 	((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)
@@ -12,7 +12,7 @@ def validate(d, m, y)
 	errors << "День не может быть отрицательным числом!" if d <= 0
 
 	if errors.empty?
-		max_day_in_month = (m == 2 && leap_year?(y)) ? 29 : $months[m - 1]
+		max_day_in_month = (m == 2 && leap_year?(y)) ? 29 : MONTHS[m - 1]
 		errors << "В указанном месяце #{max_day_in_month} дней, вы ввели #{d}." if d > max_day_in_month
 	end
 
@@ -20,7 +20,7 @@ def validate(d, m, y)
 end
 
 def day_number(d, m, y)
-	day_number = $months.take(m - 1).reduce(:+) + d
+	day_number = MONTHS.take(m - 1).reduce(:+) + d
 	leap_year?(y) && (m > 2) ? day_number + 1 : day_number
 end
 
