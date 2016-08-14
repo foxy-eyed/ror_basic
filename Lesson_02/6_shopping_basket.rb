@@ -1,6 +1,6 @@
 basket = {goods: {}, total_sum: 0}
 
-delimiter = Array.new(20, "-*-").join # для красоты
+delimiter = "-*-" * 20 # для красоты
 
 puts "Что Вы хотите сделать?"
 
