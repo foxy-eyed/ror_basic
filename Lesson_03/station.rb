@@ -26,7 +26,7 @@ class Station
   end
 
   def show_trains_by_type
-    puts "На станции #{self.name} находятся поезда: "
+    puts "На станции «#{self}» находятся поезда: "
     self.trains_by_type.each do |type, trains|
       puts "#{Train::TYPE[type]} — #{trains.size} шт.:"
       puts trains
@@ -34,8 +34,16 @@ class Station
   end
 
   def show_trains
-    puts "На станции #{self.name} находятся поезда:"
-    puts self.trains
+    if self.trains.empty?
+      puts "На станции «#{self}» поездов нет."
+    else
+      puts "На станции «#{self}» находятся поезда:"
+      puts self.trains
+    end
+  end
+
+  def to_s
+    "#{self.name}"
   end
 
 end
