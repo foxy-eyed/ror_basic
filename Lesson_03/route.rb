@@ -5,13 +5,9 @@ class Route
     @stations = [start, finish]
   end
 
-  def include(station, position)
-    if (position > 1 && position <= self.stations.count)
-      self.stations.insert(position - 1, station)
-      puts "Станция «#{station}» добавлена в маршрут #{self} на позицию #{position}"
-    else
-      puts "Порядковый номер добавляемой станции должен быть от 2 до #{self.stations.count}"
-    end
+  def include(station)
+    self.stations.insert(-2, station)
+    puts "Станция «#{station}» добавлена в маршрут #{self}."
   end
 
   def exclude(station)
@@ -42,10 +38,11 @@ class Route
   def list
     i = 0
     puts "Маршрут #{self}: "
-    self.stations.each { |station| puts "#{i += 1}. #{station}" }
+    self.stations.each_with_index { |station, i| puts "#{i + 1}. #{station}" }
   end
 
   def to_s
     "«#{self.stations.first} — #{self.stations.last}»"
   end
+  
 end

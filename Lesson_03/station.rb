@@ -16,20 +16,15 @@ class Station
     self.trains.delete(train)
   end
 
-  def trains_by_type
-    trains_by_type = {}
-    self.trains.each do |train|
-      trains_by_type[train.type] = [] unless trains_by_type.include?(train.type)
-      trains_by_type[train.type].push(train)
-    end
-    trains_by_type
-  end
-
-  def show_trains_by_type
-    puts "На станции «#{self}» находятся поезда: "
-    self.trains_by_type.each do |type, trains|
-      puts "#{Train::TYPE[type]} — #{trains.size} шт.:"
-      puts trains
+  def show_trains_by_type(type)
+    trains_by_type = []
+    self.trains.each { |train| trains_by_type.push(train) if train.type == type }
+    
+    if trains_by_type.empty?
+      puts "#{Train::TYPE[type]} поезда на станции «#{self}» отсутствуют."
+    else
+      puts "#{Train::TYPE[type]} поезда на станции «#{self}» — #{trains_by_type.size} шт.:"
+      puts trains_by_type
     end
   end
 
