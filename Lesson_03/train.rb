@@ -1,7 +1,7 @@
 class Train
-  TYPE = {passenger: "пассажирский", cargo: "грузовой"}
+  TYPE = {passenger: "Пассажирские", cargo: "Грузовые"}
 
-  attr_accessor :speed, :wagons_count, :route, :current_station
+  attr_accessor :speed, :wagons_count, :route
   attr_reader :number, :type
 
   def initialize(number, type, wagons_count)
@@ -45,7 +45,6 @@ class Train
       new_station = direction == :back ? self.prev_station : self.next_station
       if new_station
         self.current_station.let_out(self)
-        new_station.let_in(self)
         self.current_station = new_station
       else 
         puts "Поезд на конечной станции, можно перемещаться только в другую сторону!"
@@ -55,7 +54,30 @@ class Train
     end
   end
 
-  def to_s
-    "поезд №#{self.number}: #{TYPE[self.type]}, вагонов — #{self.wagons_count}, скорость — #{self.speed}"
+  def locate
+    if self.route
+      puts "Поезд идет по маршруту #{self.route}."
+      puts "Текущая станция — #{self.current_station}."
+      puts "Предыдущая станция — #{self.prev_station}." if self.prev_station
+      puts "Следующая станция — #{self.next_station}." if self.next_station
+    else 
+      puts "Поезду не назначен маршрут!"
+    end
   end
+
+  def info
+    puts "Тип: #{TYPE[self.type]}, вагонов: #{self.wagons_count}, скорость: #{self.speed}"
+  end
+
+  def to_s
+    "Поезд №#{self.number}"
+  end
+
+  private
+
+  def current_station=(station)
+    station.let_in(self)
+    @current_station = station
+  end
+
 end
