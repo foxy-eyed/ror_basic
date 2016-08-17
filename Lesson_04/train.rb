@@ -1,8 +1,7 @@
 class Train
   TYPE = {passenger: "Пассажирские", cargo: "Грузовые"}
 
-  attr_accessor :route
-  attr_reader :number, :type, :speed, :current_station, :wagons, :wagons_count
+  attr_reader :number, :type, :speed, :route, :current_station, :wagons, :wagons_count
 
   def initialize(number)
     @number = number
@@ -40,7 +39,10 @@ class Train
   end
 
   def set_route(route)
-    self.route = route
+    # уберем с текущей станции, если поезд уже на маршруте
+    self.current_station.let_out(self) if self.current_station
+    
+    @route = route
     self.current_station = route.stations.first
   end
 
@@ -123,7 +125,7 @@ class Train
   # извне скорость утановить нельзя
   def speed_up(value)
     @speed = value
-    puts "Поезд набрал скорость #{value} км/ч"
+    puts "Поезд набрал скорость #{value} км/ч."
   end
 
   # по аналогии с предыдущим методом используется внутри go

@@ -6,8 +6,12 @@ class Route
   end
 
   def include(station)
-    self.stations.insert(-2, station)
-    puts "Станция «#{station}» добавлена в маршрут #{self}."
+    if !self.stations.include?(station)
+      self.stations.insert(-2, station)
+      puts "Станция «#{station}» добавлена в маршрут #{self}."
+    else
+      puts "Станция уже добавлена в маршрут ранее."
+    end
   end
 
   def exclude(station)
@@ -36,7 +40,6 @@ class Route
   end
 
   def list
-    i = 0
     puts "Маршрут #{self}: "
     self.stations.each_with_index { |station, i| puts "#{i + 1}. #{station}" }
   end

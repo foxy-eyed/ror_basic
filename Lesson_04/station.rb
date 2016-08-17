@@ -7,24 +7,22 @@ class Station
   end
 
   def let_in(train)
-    train.stop
     self.trains << train
+    puts "Поезд прибыл на станцию «#{self}»."
   end
 
   def let_out(train)
-    train.speed_up(10)
     self.trains.delete(train)
+    puts "Поезд отправился со станции «#{self}»."
   end
 
   def show_trains_by_type(type)
-    trains_by_type = []
-    self.trains.each { |train| trains_by_type.push(train) if train.type == type }
-    
-    if trains_by_type.empty?
+    selection = trains_by_type(type)
+    if selection.empty?
       puts "#{Train::TYPE[type]} поезда на станции «#{self}» отсутствуют."
     else
-      puts "#{Train::TYPE[type]} поезда на станции «#{self}» — #{trains_by_type.size} шт.:"
-      puts trains_by_type
+      puts "#{Train::TYPE[type]} поезда на станции «#{self}» — #{selection.size} шт.:"
+      puts selection
     end
   end
 
@@ -39,6 +37,15 @@ class Station
 
   def to_s
     "#{self.name}"
+  end
+
+  private
+
+  # можно было и не прятать, просто так аккуратнее
+  def trains_by_type(type)
+    trains_by_type = []
+    self.trains.each { |train| trains_by_type.push(train) if train.type == type }
+    trains_by_type
   end
 
 end
