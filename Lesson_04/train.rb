@@ -59,7 +59,7 @@ class Train
         self.current_station.let_out(self)
         speed_up(70)
         self.current_station = new_station
-        top
+        stop
       else 
         puts "Поезд на конечной станции, можно перемещаться только в другую сторону!"
       end
