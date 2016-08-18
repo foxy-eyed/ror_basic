@@ -1,4 +1,4 @@
-basket = {goods: {}, total_sum: 0}
+basket = {}
 
 delimiter = "-*-" * 20 # для красоты
 
@@ -14,7 +14,7 @@ loop do
 
 	if choice == "add"
 		print "Введите название товара: "
-		title = gets.chomp
+		title = gets.chomp.to_sym
 
 		print "Введите цену за единицу товара: "
 		price = gets.chomp.to_f
@@ -24,17 +24,21 @@ loop do
 
 		sum = price * count
 		if (sum > 0)
-			basket[:goods][title] = {price: price, count: count, sum: sum}
-			basket[:total_sum] += sum
+			basket[title] = Hash.new(0) if !basket[title]
+			basket[title][:price] = price # цену перезапишем, вдруг инфляция?
+			basket[title][:count] += count # кол-во прибавим
+			basket[title][:sum] = price * basket[title][:count] # итог пересчитаем по новой цене
 		else
 			puts "Количество товара и цена должны быть положительными числами! Товар не добавлен в корзину!"
 		end
 	
 	elsif choice == "show"
-		basket[:goods].each do |title, item| 
+		total_sum = 0
+		basket.each do |title, item| 
 			puts "#{title}: #{item[:sum].round(2)} руб. (#{item[:count]} ед. по #{item[:price]} руб.)"
+			total_sum += item[:sum]
 		end
-		puts "Итого: #{basket[:total_sum].round(2)} руб."
+		puts "Итого: #{total_sum.round(2)} руб."
 	
 	else 
 		puts "Неизвестная команда :("
