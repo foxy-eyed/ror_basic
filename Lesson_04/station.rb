@@ -42,6 +42,7 @@ class Station
   private
 
   # можно было и не прятать, просто так аккуратнее
+  # скрывает детали реализации
   def trains_by_type(type)
     trains_by_type = []
     self.trains.each { |train| trains_by_type.push(train) if train.type == type }

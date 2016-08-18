@@ -58,10 +58,7 @@ class Train
     if self.route
       new_station = direction == :back ? prev_station : next_station
       if new_station
-        self.current_station.let_out(self)
-        speed_up(70)
-        self.current_station = new_station
-        stop
+        go!(new_station)
       else 
         puts "Поезд на конечной станции, можно перемещаться только в другую сторону!"
       end
@@ -91,9 +88,18 @@ class Train
 
   private
 
+  # вынесла фрагмент из метода go
+  # для сокрытия деталей реализации
+  def go!(new_station)
+    self.current_station.let_out(self)
+    speed_up(70)
+    self.current_station = new_station
+    stop
+  end
+
   # нельзя указать текущую станцию напрямую извне!
   # она инициализируется при назначении маршрута (set_route),
-  # а меняется только при перемещении по маршруту в методе go
+  # а меняется только при перемещении по маршруту в методе go!
   def current_station=(station)
     station.let_in(self)
     @current_station = station
@@ -121,14 +127,14 @@ class Train
   end
 
   # поезд может набирать скорость только между станциями,
-  # поэтому вызывается только внутри публичного метода go,
+  # поэтому вызывается только внутри метода go!,
   # извне скорость утановить нельзя
   def speed_up(value)
     @speed = value
     puts "Поезд набрал скорость #{value} км/ч."
   end
 
-  # по аналогии с предыдущим методом используется внутри go
+  # по аналогии с предыдущим методом используется внутри go!
   def stop
     @speed = 0
     puts "Поезд остановился."

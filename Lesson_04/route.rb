@@ -6,19 +6,17 @@ class Route
   end
 
   def include(station)
-    if !self.stations.include?(station)
-      self.stations.insert(-2, station)
-      puts "Станция «#{station}» добавлена в маршрут #{self}."
+    if !in_route?(station)
+      include!(station)
     else
       puts "Станция уже добавлена в маршрут ранее."
     end
   end
 
   def exclude(station)
-    if self.stations.include?(station)
-      if station != self.stations.first && station != self.stations.last
-        self.stations.delete(station)
-        puts "Станция «#{station}» удалена из маршрута #{self}"
+    if in_route?(station)
+      if not_endpoint?(station)
+        exclude!(station)
       else
         puts "Нельзя удалить начальную и конечную точку маршрута."
       end
@@ -47,5 +45,30 @@ class Route
   def to_s
     "«#{self.stations.first} — #{self.stations.last}»"
   end
+
+  private 
+
+  # Все методы, которые я сюда вынесла, 
+  # были выделены из кода публичных методов, чтобы сделать их короче и читабельнее.
+
+  def in_route?(station)
+    self.stations.include?(station)
+  end
+
+  def not_endpoint?(station)
+    station != self.stations.first && station != self.stations.last
+  end
   
+  # Поскольку все проверки остались в публичных методах include и exclude,
+  # напрямой вызов этих методов д.б. невозможен, ибо чреват
+  def include!(station)
+    self.stations.insert(-2, station)
+    puts "Станция «#{station}» добавлена в маршрут #{self}."
+  end
+
+  def exclude!(station)
+    self.stations.delete(station)
+    puts "Станция «#{station}» удалена из маршрута #{self}"
+  end
+
 end
