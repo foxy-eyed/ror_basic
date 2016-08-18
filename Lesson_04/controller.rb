@@ -48,15 +48,15 @@ class Controller
 
   # action #1
   def create_station
-    input = ["Укажите название станции: "]
-    iterate(input, :validate_station, :create_station!)
+    request = ["Укажите название станции: "]
+    process_input(request, :validate_station, :create_station!)
   end
 
   # action #2
   def create_train
-    input = ["Укажите тип поезда ([1] > грузовой, [2] > пассажирский): ",
+    request = ["Укажите тип поезда ([1] > грузовой, [2] > пассажирский): ",
     "Введите номер поезда: "]
-    iterate(input, :validate_train, :create_train!)
+    process_input(request, :validate_train, :create_train!)
   end
 
   # action #3
@@ -64,8 +64,8 @@ class Controller
     if self.trains.empty?
       puts "Сначала создайте хотя бы один поезд."
     else
-      input = ["Введите номер поезда [#{self.trains.keys.join(', ')}]: "]
-      iterate(input, :validate_train_selection, :attach_wagon!)
+      request = ["Введите номер поезда [#{self.trains.keys.join(', ')}]: "]
+      process_input(request, :validate_train_selection, :attach_wagon!)
     end
   end
 
@@ -74,43 +74,65 @@ class Controller
     if self.trains.empty?
       puts "Сначала создайте хотя бы один поезд."
     else
-      input = ["Введите номер поезда [#{self.trains.keys.join(', ')}]: "]
-      iterate(input, :validate_train_selection, :detach_wagon!)
+      request = ["Введите номер поезда [#{self.trains.keys.join(', ')}]: "]
+      process_input(request, :validate_train_selection, :detach_wagon!)
     end
   end
 
   # action #5
   def go_to_station
-
+    if self.trains.empty? || self.stations.empty?
+      puts "Должен быть хотя бы один поезд и одна станция."
+    else
+      request = ["Введите номер поезда [#{self.trains.keys.join(', ')}]: "]
+      train = process_input(request, :validate_train_selection, :select_train)
+      request = ["Введите название станции [#{self.stations.keys.join(', ')}]: "]
+      station = process_input(request, :validate_station_selection, :select_station)
+      train.teleport!(station)
+    end
   end
 
   # action #6
   def list_stations
-    puts "Станции в системе:"
-    puts self.stations
+    if self.stations.empty?
+      puts "В системе нет ни одной станции!"
+    else
+      puts "Станции в системе:"
+      puts self.stations.keys
+    end
   end
 
   # action #7
   def list_trains_on_station
-    
+    if self.stations.empty?
+      puts "В системе нет ни одной станции!"
+    else
+      request = ["Введите название станции [#{self.stations.keys.join(', ')}]: "]
+      station = process_input(request, :validate_station_selection, :select_station)
+      station.show_trains
+    end
   end
 
-  def iterate(input, validator, success_callback)
+  # хотелось избежать дублирования кода, поэтому что-то такое изобрела
+  # название не самое очевидное, но более удачного не придумалось
+  def process_input(request, validator, success_callback)
+    response = nil
     loop do
       args = []
-      input.each do |message|
+      request.each do |message|
         print "#{message}"
         args << gets.chomp
       end
       
       check = self.send(validator, *args)
       if check[:success]
-        self.send(success_callback, *args)
+        response = self.send(success_callback, *args)
         break
       else
         puts check[:errors]
       end
     end
+    response
   end
 
   def validate_train(type, number)
@@ -133,15 +155,31 @@ class Controller
     if self.trains[number.to_sym]
       {success: true}
     else
-      {success: false, 'errors': "Поезда с таким номером нет"}
+      {success: false, 'errors': "Поезда с таким номером нет!"}
     end
+  end
+
+  def validate_station_selection(name)
+    if self.stations[name.to_sym]
+      {success: true}
+    else
+      {success: false, 'errors': "Такой станции нет!"}
+    end
+  end
+
+  def select_train(number)
+    selected_train = self.trains[number.to_sym]
+  end
+
+  def select_station(name)
+    selected_station = self.stations[name.to_sym]
   end
 
   def create_train!(type, number)
     train = type == 1 ? CargoTrain.new(number) : PassengerTrain.new(number)
     @trains[number.to_sym] = train
     puts "#{train} создан."
-    puts "#{train.info}."
+    puts "#{train.info}"
   end
 
   def create_station!(name)
@@ -151,14 +189,14 @@ class Controller
   end
 
   def attach_wagon!(number)
-    selected_train = self.trains[number.to_sym]
+    selected_train = select_train(number)
     type = selected_train.type
     wagon = type == :cargo ? CargoWagon.new() : PassengerWagon.new()
     selected_train.attach_wagon(wagon)
   end
 
   def detach_wagon!(number)
-    selected_train = self.trains[number.to_sym]
+    selected_train = select_train(number)
     last_wagon = selected_train.wagons.last
     selected_train.detach_wagon(last_wagon)
   end

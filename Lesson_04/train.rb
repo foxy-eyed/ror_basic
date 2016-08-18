@@ -30,7 +30,7 @@ class Train
   def detach_wagon(wagon)
     if self.speed.zero?
       if self.wagons.include?(wagon)
-        puts detach_wagon!(wagon)
+        detach_wagon!(wagon)
         puts "Вагон отцеплен! Стало вагонов: #{self.wagons_count}"
       else
         puts "Вагон не прицеплен к поезду!"
@@ -86,6 +86,14 @@ class Train
 
   def to_s
     "Поезд №#{self.number}"
+  end
+
+  # этого метода изначально не было,
+  # добавлен для перемещния без маршрута
+  # (чисто для демонстрации текстового интерфейса в усл. задании)
+  def teleport!(station)
+    self.current_station.let_out(self) if self.current_station
+    self.current_station = station
   end
 
   private
