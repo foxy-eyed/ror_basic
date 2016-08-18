@@ -15,6 +15,7 @@ class Train
       if wagon.match?(self)
         if !self.wagons.include?(wagon)
           attach_wagon!(wagon)
+          puts "Вагон прицеплен! Стало вагонов: #{self.wagons_count}"
         else
           puts "Мы уже прикрепили этот вагон ранее."
         end
@@ -29,7 +30,8 @@ class Train
   def detach_wagon(wagon)
     if self.speed.zero?
       if self.wagons.include?(wagon)
-        detach_wagon!(wagon)
+        puts detach_wagon!(wagon)
+        puts "Вагон отцеплен! Стало вагонов: #{self.wagons_count}"
       else
         puts "Вагон не прицеплен к поезду!"
       end
