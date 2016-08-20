@@ -197,8 +197,7 @@ class Controller
 
   def detach_wagon!(number)
     selected_train = select_train(number)
-    last_wagon = selected_train.wagons.last
-    selected_train.detach_wagon(last_wagon)
+    selected_train.detach_wagon
   end
   
 end

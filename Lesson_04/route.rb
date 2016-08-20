@@ -15,7 +15,7 @@ class Route
 
   def exclude(station)
     if in_route?(station)
-      if not_endpoint?(station)
+      if !endpoint?(station)
         exclude!(station)
       else
         puts "Нельзя удалить начальную и конечную точку маршрута."
@@ -55,8 +55,8 @@ class Route
     self.stations.include?(station)
   end
 
-  def not_endpoint?(station)
-    station != self.stations.first && station != self.stations.last
+  def endpoint?(station)
+    station == self.stations.first || station == self.stations.last
   end
   
   # Поскольку все проверки остались в публичных методах include и exclude,

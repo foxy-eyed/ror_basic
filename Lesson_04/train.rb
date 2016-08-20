@@ -12,29 +12,22 @@ class Train
 
   def attach_wagon(wagon)
     if self.speed.zero?
-      if wagon.match?(self)
-        if !self.wagons.include?(wagon)
-          attach_wagon!(wagon)
-          puts "Вагон прицеплен! Стало вагонов: #{self.wagons_count}"
-        else
-          puts "Мы уже прикрепили этот вагон ранее."
-        end
+      if wagon.match?(self) && !self.wagons.include?(wagon)
+        attach_wagon!(wagon)
+        puts "Вагон прицеплен! Стало вагонов: #{self.wagons_count}"
       else
-        puts "Тип вагона не соответствует типу поезда!"
+        puts "Тип вагона не соответствует или он уже прицеплен!"
       end
     else 
       puts "Нельзя прицепить вагон на ходу!"
     end
   end
 
-  def detach_wagon(wagon)
+  def detach_wagon
     if self.speed.zero?
-      if self.wagons.include?(wagon)
-        detach_wagon!(wagon)
-        puts "Вагон отцеплен! Стало вагонов: #{self.wagons_count}"
-      else
-        puts "Вагон не прицеплен к поезду!"
-      end
+      wagon = self.wagons.last
+      detach_wagon!(wagon)
+      puts "Вагон отцеплен! Стало вагонов: #{self.wagons_count}"
     else 
       puts "Нельзя отцепить вагон на ходу!"
     end
