@@ -1,7 +1,9 @@
 require_relative '../modules/vendor'
+require_relative '../modules/instance_counter'
 
 class Train
   include Vendor
+  include InstanceCounter
   
   TYPE = {passenger: "Пассажирские", cargo: "Грузовые"}
 
@@ -19,6 +21,7 @@ class Train
     @wagons = []
     @wagons_count = 0
     @@trains[number] = self
+    register_instance
   end
 
   def attach_wagon(wagon)
