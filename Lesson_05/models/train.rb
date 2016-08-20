@@ -1,6 +1,3 @@
-require_relative '../modules/vendor'
-require_relative '../modules/instance_counter'
-
 class Train
   include Vendor
   include InstanceCounter

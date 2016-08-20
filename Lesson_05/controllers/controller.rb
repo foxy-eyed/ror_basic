@@ -97,7 +97,7 @@ class Controller
     if self.stations.empty?
       puts "В системе нет ни одной станции!"
     else
-      puts "Станции в системе:"
+      puts "Станции в системе (#{Station.all}):"
       puts self.stations.keys
     end
   end

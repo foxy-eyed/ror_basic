@@ -1,5 +1,3 @@
-require_relative '../modules/vendor'
-
 class Wagon
   include Vendor
   
