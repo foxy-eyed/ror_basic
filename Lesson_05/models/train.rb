@@ -9,7 +9,7 @@ class Train
   attr_reader :number, :type, :speed, :route, :current_station, :wagons, :wagons_count
 
   def self.find(number)
-    @@trains.has_key?(number) ? @@trains[number] : nil
+    @@trains[number]
   end
 
   def initialize(number)
