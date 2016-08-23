@@ -3,6 +3,7 @@ class Train
   include InstanceCounter
   
   TYPE = {passenger: "Пассажирские", cargo: "Грузовые"}
+  NUMBER_PATTERN = /^[[:alnum:]]{3}[-]?[[:alnum:]]{2}$/
 
   @@trains = {}
 
@@ -100,9 +101,8 @@ class Train
   protected
 
   def validate!
-    raise "Номер поезда не может быть пуст!" if self.number.empty?
-    raise "Поезд с таким номером уже есть!" if @@trains.has_key?(self.number)
-    #todo regexp
+    raise "Недопустимый формат номера!" if NUMBER_PATTERN.match(self.number).nil?
+    raise "Поезд с таким номером уже есть!" if @@trains.has_key?(self.number.to_sym)
     true
   end
 

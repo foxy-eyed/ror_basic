@@ -58,7 +58,7 @@ class Controller
   def create_train
     print "Укажите тип поезда ([1] > грузовой, [2] > пассажирский): "
     type = gets.chomp.to_i
-    print "Введите номер поезда: "
+    print "Введите номер поезда (XXX-XX или XXXXX): "
     number = gets.chomp
     create_train!(type, number)
   end
