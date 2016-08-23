@@ -43,7 +43,7 @@ class Controller
   def run(method, need_retry = false)
     self.send(method)
   rescue RuntimeError => e
-    puts e
+    puts e.message
     retry if need_retry
   end
 
@@ -81,7 +81,9 @@ class Controller
   def go_to_station
     train = select_train
     station = select_station
-    train.teleport!(station)
+    relocation = train.teleport!(station)
+    puts "Поезд отправился со станции «#{relocation[:from]}»." if !relocation[:from].nil?
+    puts "Поезд прибыл на станцию «#{relocation[:to]}»."
   end
 
   # action #6
@@ -97,7 +99,12 @@ class Controller
   # action #7
   def list_trains_on_station
     station = select_station
-    station.show_trains
+    if station.trains.empty?
+      puts "На станции «#{station}» поездов нет."
+    else
+      puts "На станции «#{station}» находятся поезда:"
+      puts station.trains
+    end
   end
 
   def select_train
@@ -105,7 +112,7 @@ class Controller
     print "Введите номер поезда [#{Train.list.keys.join(', ')}]: "
     number = gets.chomp
     selected_train = Train.find(number)
-    raise "Поезда с таким номером нет!" if !selected_train
+    raise "Поезда с таким номером нет!" if selected_train.nil?
     selected_train
   end
 
@@ -114,7 +121,7 @@ class Controller
     print "Введите название станции [#{Station.all.keys.join(', ')}]: "
     name = gets.chomp
     selected_station = Station.find(name)
-    raise "Станция с таким названием не найдена!" if !selected_station
+    raise "Станция с таким названием не найдена!" if selected_station.nil?
     selected_station
   end
 

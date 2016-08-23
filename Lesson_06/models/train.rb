@@ -32,13 +32,6 @@ class Train
     false
   end
 
-  def validate!
-    raise "Номер поезда не может быть пуст!" if self.number.empty?
-    raise "Поезд с таким номером уже есть!" if @@trains.has_key?(self.number)
-    #todo regexp
-    true
-  end
-
   def attach_wagon(wagon)
     raise "Нельзя прицепить вагон на ходу!" if !self.speed.zero?
     raise "Тип вагона не соответствует или он уже прицеплен!" if !wagon.match?(self) || self.wagons.include?(wagon)
@@ -68,31 +61,23 @@ class Train
   end
 
   def go(direction = :forward)
-    if self.route
-      new_station = direction == :back ? prev_station : next_station
-      if new_station
-        go!(new_station)
-      else 
-        puts "Поезд на конечной станции, можно перемещаться только в другую сторону!"
-      end
-    else 
-      puts "Поезду не назначен маршрут!"
-    end
+    raise "Поезду не назначен маршрут!" if self.route.nil?
+    new_station = direction == :back ? prev_station : next_station
+    raise "Поезд на конечной станции!" if new_station.nil?
+    go!(new_station)
   end
 
   def locate
-    if self.route
-      puts "Поезд идет по маршруту #{self.route}."
-      puts "Текущая станция — #{self.current_station}."
-      puts "Предыдущая станция — #{prev_station}." if prev_station
-      puts "Следующая станция — #{next_station}." if next_station
-    else 
-      puts "Поезду не назначен маршрут!"
-    end
+    location = {
+      route: self.route, 
+      current: self.current_station,
+      prev: prev_station,
+      next: next_station
+    }
   end
 
   def info
-    puts "Тип: #{TYPE[self.type]}, вагонов: #{self.wagons_count}"
+    "Тип: #{TYPE[self.type]}, вагонов: #{self.wagons_count}"
   end
 
   def to_s
@@ -103,8 +88,22 @@ class Train
   # добавлен для перемещния без маршрута
   # (чисто для демонстрации текстового интерфейса в усл. задании)
   def teleport!(station)
-    self.current_station.let_out(self) if self.current_station
-    self.current_station = station
+    relocation = {}
+    if self.current_station
+      relocation[:from] = self.current_station
+      self.current_station.let_out(self)
+    end
+    self.current_station = relocation[:to] = station
+    relocation
+  end
+
+  protected
+
+  def validate!
+    raise "Номер поезда не может быть пуст!" if self.number.empty?
+    raise "Поезд с таким номером уже есть!" if @@trains.has_key?(self.number)
+    #todo regexp
+    true
   end
 
   private

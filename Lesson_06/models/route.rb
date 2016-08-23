@@ -3,26 +3,24 @@ class Route
 
   def initialize(start, finish)
     @stations = [start, finish]
+    validate!
+  end
+
+  def is_valid?
+    validate!
+  rescue
+    false
   end
 
   def include(station)
-    if !in_route?(station)
-      include!(station)
-    else
-      puts "Станция уже добавлена в маршрут ранее."
-    end
+    raise "Станция уже добавлена в маршрут ранее." if in_route?(station)
+    include!(station)
   end
 
   def exclude(station)
-    if in_route?(station)
-      if !endpoint?(station)
-        exclude!(station)
-      else
-        puts "Нельзя удалить начальную и конечную точку маршрута."
-      end
-    else
-      puts "Станция не найдена в маршруте."
-    end
+    raise "Станция не найдена в маршруте." if !in_route?(station)
+    raise "Нельзя удалить начальную и конечную точку маршрута." if endpoint?(station)
+    exclude!(station)
   end
 
   def next(current)
@@ -38,12 +36,22 @@ class Route
   end
 
   def list
-    puts "Маршрут #{self}: "
-    self.stations.each_with_index { |station, i| puts "#{i + 1}. #{station}" }
+    list = "Маршрут #{self}: "
+    self.stations.each_with_index { |station, i| list += "#{i + 1}. #{station}" }
+    list
   end
 
   def to_s
     "«#{self.stations.first} — #{self.stations.last}»"
+  end
+
+  protected
+
+  def validate!
+    self.stations.each_with_index do |station, i|
+      raise "Объект #{i + 1} в маршруте не является станцией!" if !station.is_a?(Station)
+    end
+    true
   end
 
   private 
@@ -58,12 +66,10 @@ class Route
   
   def include!(station)
     self.stations.insert(-2, station)
-    puts "Станция «#{station}» добавлена в маршрут #{self}."
   end
 
   def exclude!(station)
     self.stations.delete(station)
-    puts "Станция «#{station}» удалена из маршрута #{self}"
   end
 
 end
