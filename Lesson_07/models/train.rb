@@ -81,8 +81,8 @@ class Train
     "Поезд №#{self.number}: тип — #{TYPE[self.type]}, вагонов — #{self.wagons_count}"
   end
 
-  def each_wagon_with_index(&block)
-    self.wagons.each_with_index { |wagon, i| block.call(i += 1, wagon) }
+  def each_wagon_with_index(block)
+    self.wagons.each_with_index(&block)
   end
 
   # этого метода изначально не было,

@@ -201,15 +201,14 @@ class Controller
       puts "На станции «#{station}» находятся поезда:"
       station.each_train do |train|
         puts train
-        show_wagons(train) if with_wagons   
+        show_wagons(train) if with_wagons
       end
     end
   end
 
   def show_wagons(train)
-    train.each_wagon_with_index do |i, wagon|
-      puts "#{i}. #{wagon}"
-    end
+    putter = lambda { |wagon, i| puts "#{i + 1}. #{wagon}" }
+    train.each_wagon_with_index(putter)
   end
 
   def display_all_objects
