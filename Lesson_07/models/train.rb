@@ -82,8 +82,7 @@ class Train
   end
 
   def each_wagon_with_index(&block)
-    i = 0
-    self.wagons.each { |wagon| block.call(i += 1, wagon) }
+    self.wagons.each_with_index { |wagon, i| block.call(i += 1, wagon) }
   end
 
   # этого метода изначально не было,
