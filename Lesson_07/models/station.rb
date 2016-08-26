@@ -45,6 +45,10 @@ class Station
     trains_by_type
   end
 
+  def each_train(&block)
+    self.trains.each { |train| block.call(train) }
+  end
+
   def to_s
     "#{self.name}"
   end

@@ -1,7 +1,21 @@
 class Controller
-  BORDER = "---" * 5;
+  BORDER = "---" * 12;
+
+  def init(data)
+    data[:stations].each { |name| create_station!(name) }
+    
+    data[:trains].each do |item| 
+      train = create_train!(item[:type], item[:number])
+      item[:wagons_count].times do
+        attach_wagon!(train, item[:wagons_capacity])
+      end
+      random_station = Station.find(data[:stations][rand(data[:stations].size)])
+      train.teleport!(random_station)
+    end
+  end
 
   def show_actions
+    puts BORDER;
     puts "Для выбора действия введите его порядковый номер: "
     puts "[1] > Создать станцию"
     puts "[2] > Создать поезд"
@@ -10,8 +24,10 @@ class Controller
     puts "[5] > Поместить поезд на станцию"
     puts "[6] > Посмотреть список станций"
     puts "[7] > Посмотреть список поездов на станции"
+    puts "[8] > Посмотреть список вагонов поезда"
+    puts "[9] > Загрузить вагон"
     puts BORDER;
-    puts "Выход: exit"
+    puts "Дерево объектов: all  |  Выход: exit"
     puts BORDER;
   end
 
@@ -31,11 +47,15 @@ class Controller
       run(:list_stations)
     when "7"
       run(:list_trains_on_station)
+    when "8"
+      run(:list_wagons)
+    when "9"
+      run(:load_wagon)
+    when "all"
+      run(:display_all_objects)
     else
       puts "Неизвестная команда!"
     end
-
-    puts BORDER;
   end
 
   private
@@ -101,12 +121,20 @@ class Controller
   # action #7
   def list_trains_on_station
     station = select_station
-    if station.trains.empty?
-      puts "На станции «#{station}» поездов нет."
-    else
-      puts "На станции «#{station}» находятся поезда:"
-      puts station.trains
-    end
+    show_trains(station)
+  end
+
+  # action #8
+  def list_wagons
+    train = select_train
+    show_wagons(train)
+  end
+
+  # action #9
+  def load_wagon
+    train = select_train
+    wagon = select_wagon(train)
+    load_wagon!(wagon)
   end
 
   def select_train
@@ -127,11 +155,18 @@ class Controller
     selected_station
   end
 
+  def select_wagon(train)
+    show_wagons(train)
+    print "Введите порядковый номер вагона: "
+    i = gets.chomp.to_i
+    wagon = train.wagons.fetch(i - 1) {raise "Вагон не найден!"}
+  end
+
   def create_train!(type, number)
     raise "Некорректный тип поезда!" if ![1, 2].include?(type)
     train = type == 1 ? CargoTrain.new(number) : PassengerTrain.new(number)
-    puts "#{train} создан."
-    puts "#{train.info}"
+    puts "#{train.number} создан."
+    train
   end
 
   def create_station!(name)
@@ -147,5 +182,40 @@ class Controller
   def detach_wagon!(train)
     train.detach_wagon
   end
-  
+
+  def load_wagon!(wagon)
+    if wagon.type == :cargo
+      print "Введите объём груза: "
+      value = gets.chomp.to_f
+      wagon.load(value)
+    else
+      wagon.take_a_seat
+    end
+    puts "Загрузка завершена."
+  end
+
+  def show_trains(station, with_wagons = false)
+    if station.trains.empty?
+      puts "На станции «#{station}» поездов нет."
+    else
+      puts "На станции «#{station}» находятся поезда:"
+      station.each_train do |train|
+        puts train
+        show_wagons(train) if with_wagons   
+      end
+    end
+  end
+
+  def show_wagons(train)
+    train.each_wagon_with_index do |i, wagon|
+      puts "#{i}. #{wagon}"
+    end
+  end
+
+  def display_all_objects
+    Station.all.each_value do |station|
+      puts BORDER
+      show_trains(station, true)
+    end
+  end
 end

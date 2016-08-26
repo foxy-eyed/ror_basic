@@ -77,12 +77,13 @@ class Train
     }
   end
 
-  def info
-    "Тип: #{TYPE[self.type]}, вагонов: #{self.wagons_count}"
+  def to_s
+    "Поезд №#{self.number}: тип — #{TYPE[self.type]}, вагонов — #{self.wagons_count}"
   end
 
-  def to_s
-    "Поезд №#{self.number}"
+  def each_wagon_with_index(&block)
+    i = 0
+    self.wagons.each { |wagon| block.call(i += 1, wagon) }
   end
 
   # этого метода изначально не было,
