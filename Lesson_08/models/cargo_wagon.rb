@@ -8,11 +8,11 @@ class CargoWagon < Wagon
   end
 
   def load(volume)
-    raise "Недостаточно места!" unless self.available?(volume)
+    raise "Недостаточно места!" unless available?(volume)
     @occupied += volume
   end
 
   def to_s
-    "Грузовой вагон: занятый объём — #{self.occupied}, доступный — #{self.available}"
+    "Грузовой вагон: занятый объём — #{occupied}, доступный — #{available}"
   end
 end

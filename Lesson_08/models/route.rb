@@ -6,7 +6,7 @@ class Route
     validate!
   end
 
-  def is_valid?
+  def valid?
     validate!
   rescue
     false
@@ -24,31 +24,27 @@ class Route
   end
 
   def next(current)
-    if current != self.stations.last
-      self.stations.at(self.stations.index(current) + 1)
-    end
+    stations.at(stations.index(current) + 1) if current != stations.last
   end
 
   def prev(current)
-    if current != self.stations.first
-      self.stations.at(self.stations.index(current) - 1)
-    end
+    stations.at(stations.index(current) - 1) if current != stations.first
   end
 
   def list
     list = "Маршрут #{self}: "
-    self.stations.each_with_index { |station, i| list += "#{i + 1}. #{station}" }
+    stations.each_with_index { |station, i| list += "#{i + 1}. #{station}" }
     list
   end
 
   def to_s
-    "«#{self.stations.first} — #{self.stations.last}»"
+    "«#{stations.first} — #{stations.last}»"
   end
 
   protected
 
   def validate!
-    self.stations.each_with_index do |station, i|
+    stations.each_with_index do |station, i|
       raise "Объект #{i + 1} в маршруте не станция!" unless station.is_a?(Station)
     end
     true
@@ -57,19 +53,18 @@ class Route
   private
 
   def in_route?(station)
-    self.stations.include?(station)
+    stations.include?(station)
   end
 
   def endpoint?(station)
-    station == self.stations.first || station == self.stations.last
+    station == stations.first || station == stations.last
   end
-  
+
   def include!(station)
-    self.stations.insert(-2, station)
+    stations.insert(-2, station)
   end
 
   def exclude!(station)
-    self.stations.delete(station)
+    stations.delete(station)
   end
-
 end

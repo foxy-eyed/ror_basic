@@ -1,22 +1,22 @@
 class Controller
-  BORDER = "---" * 12;
+  BORDER = "---" * 12
   ACTIONS = {
-    "1"   => {method: :create_station, retry: true},
-    "2"   => {method: :create_train, retry: true},
-    "3"   => {method: :attach_wagon},
-    "4"   => {method: :detach_wagon},
-    "5"   => {method: :go_to_station},
-    "6"   => {method: :list_stations},
-    "7"   => {method: :list_trains_on_station},
-    "8"   => {method: :list_wagons},
-    "9"   => {method: :load_wagon},
-    "all" => {method: :display_all_objects}
-  }
+    "1"   => { method: :create_station, retry: true },
+    "2"   => { method: :create_train, retry: true },
+    "3"   => { method: :attach_wagon },
+    "4"   => { method: :detach_wagon },
+    "5"   => { method: :go_to_station },
+    "6"   => { method: :list_stations },
+    "7"   => { method: :list_trains_on_station },
+    "8"   => { method: :list_wagons },
+    "9"   => { method: :load_wagon },
+    "all" => { method: :display_all_objects }
+  }.freeze
 
   def init(data)
     data[:stations].each { |name| create_station!(name) }
-    
-    data[:trains].each do |item| 
+
+    data[:trains].each do |item|
       train = create_train!(item[:type], item[:number])
       item[:wagons_count].times do
         attach_wagon!(train, item[:wagons_capacity])
@@ -27,7 +27,7 @@ class Controller
   end
 
   def show_actions
-    puts BORDER;
+    puts BORDER
     puts "Для выбора действия введите его порядковый номер: "
     puts "[1] > Создать станцию"
     puts "[2] > Создать поезд"
@@ -38,9 +38,9 @@ class Controller
     puts "[7] > Посмотреть список поездов на станции"
     puts "[8] > Посмотреть список вагонов поезда"
     puts "[9] > Загрузить вагон"
-    puts BORDER;
+    puts BORDER
     puts "Дерево объектов: all  |  Выход: exit"
-    puts BORDER;
+    puts BORDER
   end
 
   def run_action(choice)
@@ -53,7 +53,7 @@ class Controller
   private
 
   def run(method, need_retry = false)
-    self.send(method)
+    send(method)
   rescue RuntimeError => e
     puts e.message
     retry if need_retry
@@ -80,7 +80,7 @@ class Controller
     train = select_train
     print "Укажите для вагона #{Wagon.dimension(train.type)}: "
     capacity = gets.chomp
-    wagon_count = attach_wagon!(train, capacity)
+    attach_wagon!(train, capacity)
     puts "Вагон прицеплен. Стало вагонов: #{train.wagons_count}."
   end
 
@@ -151,7 +151,7 @@ class Controller
     show_wagons(train)
     print "Введите порядковый номер вагона: "
     i = gets.chomp.to_i
-    wagon = train.wagons.fetch(i - 1) {raise "Вагон не найден!"}
+    train.wagons.fetch(i - 1) { raise "Вагон не найден!" }
   end
 
   def create_train!(type, number)
@@ -167,7 +167,7 @@ class Controller
   end
 
   def attach_wagon!(train, capacity)
-    wagon = 
+    wagon =
       if train.type == :cargo
         CargoWagon.new(capacity)
       else
