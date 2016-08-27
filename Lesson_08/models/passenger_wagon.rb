@@ -8,7 +8,7 @@ class PassengerWagon < Wagon
   end
 
   def take_a_seat
-    raise "Свободных мест нет!" if !self.available?(1)
+    raise "Свободных мест нет!" unless self.available?(1)
     @occupied += 1
   end
 

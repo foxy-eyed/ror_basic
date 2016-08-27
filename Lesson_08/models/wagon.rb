@@ -35,6 +35,6 @@ class Wagon
   protected
 
   def validate!
-    raise "Вместимость должна быть положительным числом!" if self.capacity <= 0
+    raise "Вместимость должна быть больше нуля!" unless self.capacity > 0
   end
 end

@@ -1,5 +1,17 @@
 class Controller
   BORDER = "---" * 12;
+  ACTIONS = {
+    "1"   => {method: :create_station, retry: true},
+    "2"   => {method: :create_train, retry: true},
+    "3"   => {method: :attach_wagon},
+    "4"   => {method: :detach_wagon},
+    "5"   => {method: :go_to_station},
+    "6"   => {method: :list_stations},
+    "7"   => {method: :list_trains_on_station},
+    "8"   => {method: :list_wagons},
+    "9"   => {method: :load_wagon},
+    "all" => {method: :display_all_objects}
+  }
 
   def init(data)
     data[:stations].each { |name| create_station!(name) }
@@ -31,31 +43,11 @@ class Controller
     puts BORDER;
   end
 
-  def run_action(action)
-    case action
-    when "1"
-      run(:create_station, true)
-    when "2"
-      run(:create_train, true)
-    when "3"
-      run(:attach_wagon)
-    when "4"
-      run(:detach_wagon)
-    when "5"
-      run(:go_to_station)
-    when "6"
-      run(:list_stations)
-    when "7"
-      run(:list_trains_on_station)
-    when "8"
-      run(:list_wagons)
-    when "9"
-      run(:load_wagon)
-    when "all"
-      run(:display_all_objects)
-    else
-      puts "Неизвестная команда!"
-    end
+  def run_action(choice)
+    action = ACTIONS.fetch(choice)
+    run(action[:method], action[:retry])
+  rescue KeyError
+    puts "Неизвестня команда"
   end
 
   private
@@ -104,7 +96,7 @@ class Controller
     train = select_train
     station = select_station
     relocation = train.teleport!(station)
-    puts "Поезд отправился со станции «#{relocation[:from]}»." if !relocation[:from].nil?
+    puts "Поезд отправился со станции «#{relocation[:from]}»." if relocation[:from]
     puts "Поезд прибыл на станцию «#{relocation[:to]}»."
   end
 
@@ -163,7 +155,7 @@ class Controller
   end
 
   def create_train!(type, number)
-    raise "Некорректный тип поезда!" if ![1, 2].include?(type)
+    raise "Некорректный тип поезда!" unless [1, 2].include?(type)
     train = type == 1 ? CargoTrain.new(number) : PassengerTrain.new(number)
     puts "#{train.number} создан."
     train
@@ -175,7 +167,12 @@ class Controller
   end
 
   def attach_wagon!(train, capacity)
-    wagon = train.type == :cargo ? CargoWagon.new(capacity) : PassengerWagon.new(capacity)
+    wagon = 
+      if train.type == :cargo
+        CargoWagon.new(capacity)
+      else
+        PassengerWagon.new(capacity)
+      end
     train.attach_wagon(wagon)
   end
 
@@ -207,7 +204,7 @@ class Controller
   end
 
   def show_wagons(train)
-    putter = lambda { |wagon, i| puts "#{i + 1}. #{wagon}" }
+    putter = ->(wagon, i) { puts "#{i + 1}. #{wagon}" }
     train.each_wagon_with_index(putter)
   end
 

@@ -8,7 +8,7 @@ class CargoWagon < Wagon
   end
 
   def load(volume)
-    raise "Недостаточно места!" if !self.available?(volume)
+    raise "Недостаточно места!" unless self.available?(volume)
     @occupied += volume
   end
 

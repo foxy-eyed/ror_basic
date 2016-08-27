@@ -1,8 +1,6 @@
 class Station
   include InstanceCounter
 
-  # первый символ - буква алфавита, может включать цифры и пробелы
-  # длина от 3 до 20 символов
   NAME_PATTERN = /^[[:alpha:]]{1}[[:print:]]{2,19}$/
   
   @@stations = {}
@@ -56,8 +54,9 @@ class Station
   protected
 
   def validate!
-    raise "Название должно начинаться с буквы, длина 3..20!" if NAME_PATTERN.match(self.name).nil?
-    raise "Станция с таким именем уже есть" if @@stations.has_key?(self.name.to_sym)
+    if NAME_PATTERN.match(self.name).nil?
+      raise "Название должно начинаться с буквы, длина 3..20!"
+    end
+    raise "Станция с таким именем уже есть" if @@stations.key?(self.name.to_sym)
   end
-
 end

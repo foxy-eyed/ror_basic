@@ -18,8 +18,8 @@ class Route
   end
 
   def exclude(station)
-    raise "Станция не найдена в маршруте." if !in_route?(station)
-    raise "Нельзя удалить начальную и конечную точку маршрута." if endpoint?(station)
+    raise "Станция не найдена в маршруте." unless in_route?(station)
+    raise "Нельзя удалить конечные станции маршрута." if endpoint?(station)
     exclude!(station)
   end
 
@@ -49,12 +49,12 @@ class Route
 
   def validate!
     self.stations.each_with_index do |station, i|
-      raise "Объект #{i + 1} в маршруте не является станцией!" if !station.is_a?(Station)
+      raise "Объект #{i + 1} в маршруте не станция!" unless station.is_a?(Station)
     end
     true
   end
 
-  private 
+  private
 
   def in_route?(station)
     self.stations.include?(station)

@@ -34,13 +34,15 @@ class Train
   end
 
   def attach_wagon(wagon)
-    raise "Нельзя прицепить вагон на ходу!" if !self.speed.zero?
-    raise "Тип вагона не соответствует или он уже прицеплен!" if !wagon.match?(self) || self.wagons.include?(wagon)
+    raise "Нельзя прицепить вагон на ходу!" unless self.speed.zero?
+    unless wagon.match?(self) || self.wagons.include?(wagon)
+      raise "Тип вагона не соответствует или он уже прицеплен!"
+    end
     attach_wagon!(wagon)
   end
 
   def detach_wagon
-    raise "Нельзя отцепить вагон на ходу!" if !self.speed.zero?
+    raise "Нельзя отцепить вагон на ходу!" unless self.speed.zero?
     raise "У позда нет вагонов!" if self.wagons_count.zero?
     wagon = self.wagons.last
     detach_wagon!(wagon)
@@ -48,7 +50,6 @@ class Train
 
   def set_route(route)
     self.current_station.let_out(self) if self.current_station
-    
     @route = route
     self.current_station = route.stations.first
   end
@@ -70,7 +71,7 @@ class Train
 
   def locate
     location = {
-      route: self.route, 
+      route: self.route,
       current: self.current_station,
       prev: prev_station,
       next: next_station
@@ -102,7 +103,7 @@ class Train
 
   def validate!
     raise "Недопустимый формат номера!" if NUMBER_PATTERN.match(self.number).nil?
-    raise "Поезд с таким номером уже есть!" if @@trains.has_key?(self.number.to_sym)
+    raise "Поезд с таким номером уже есть!" if @@trains.key?(self.number.to_sym)
     true
   end
 
@@ -141,5 +142,4 @@ class Train
   def stop
     @speed = 0
   end
-
 end
