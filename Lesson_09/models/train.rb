@@ -1,6 +1,7 @@
 class Train
   include Vendor
   include InstanceCounter
+  include Accessors
 
   TYPE = { passenger: "Пассажирские", cargo: "Грузовые" }.freeze
   NUMBER_PATTERN = /^[[:alnum:]]{3}[-]?[[:alnum:]]{2}$/
@@ -8,6 +9,8 @@ class Train
   @@trains = {}
 
   attr_reader :number, :type, :speed, :route, :current_station, :wagons, :wagons_count
+  attr_accessor_with_history :driver, :conductor
+  strong_attr_accessor :home_station, Station
 
   def self.find(number)
     @@trains[number.to_sym]
