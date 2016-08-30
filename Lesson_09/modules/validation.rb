@@ -6,11 +6,16 @@ module Validation
 
   module ClassMethods
     def validate(name, validator, options = nil)
-      self.rules << {var: name, validator: validator, options: options}
+      key = "#{name}_#{validator}".to_sym
+      rules[key] = { validator: validator, args: [name, options].compact }
     end
 
     def rules
-      @rules ||= []
+      @rules ||= {}
+    end
+
+    def inherited(subclass)
+      subclass.instance_variable_set(:@rules, rules.dup)
     end
   end
 
@@ -22,10 +27,10 @@ module Validation
     end
 
     protected
-
+    
     def validate!
-      self.class.rules.each do |rule|
-        send(rule[:validator], rule[:var], rule[:options])
+      self.class.rules.each do |_key, rule|
+        send(rule[:validator], *rule[:args])
       end
     end
 
@@ -46,7 +51,7 @@ module Validation
     end
 
     def positive_number(name)
-      raise "Атрибут #{name} должен быть больше нуля!" unless get_val(name).positive?
+      raise "Атрибут #{name} должен быть больше нуля!" unless get_val(name) > 0
     end
   end
 end

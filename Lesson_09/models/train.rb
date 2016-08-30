@@ -10,11 +10,11 @@ class Train
   @@trains = {}
 
   attr_reader :number, :type, :speed, :route, :current_station, :wagons, :wagons_count
-  
+
   attr_accessor_with_history :driver, :conductor
-  
+
   strong_attr_accessor :home_station, Station
-  
+
   validate :number, :format, NUMBER_PATTERN
 
   def self.find(number)
