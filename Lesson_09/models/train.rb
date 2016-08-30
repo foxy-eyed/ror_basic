@@ -2,6 +2,7 @@ class Train
   include Vendor
   include InstanceCounter
   include Accessors
+  include Validation
 
   TYPE = { passenger: "Пассажирские", cargo: "Грузовые" }.freeze
   NUMBER_PATTERN = /^[[:alnum:]]{3}[-]?[[:alnum:]]{2}$/
@@ -9,8 +10,12 @@ class Train
   @@trains = {}
 
   attr_reader :number, :type, :speed, :route, :current_station, :wagons, :wagons_count
+  
   attr_accessor_with_history :driver, :conductor
+  
   strong_attr_accessor :home_station, Station
+  
+  validate :number, :format, NUMBER_PATTERN
 
   def self.find(number)
     @@trains[number.to_sym]
@@ -28,12 +33,6 @@ class Train
     validate!
     register_instance
     @@trains[number.to_sym] = self
-  end
-
-  def valid?
-    validate!
-  rescue
-    false
   end
 
   def attach_wagon(wagon)
@@ -98,14 +97,6 @@ class Train
     end
     self.current_station = relocation[:to] = station
     relocation
-  end
-
-  protected
-
-  def validate!
-    raise "Недопустимый формат номера!" if NUMBER_PATTERN.match(number).nil?
-    raise "Поезд с таким номером уже есть!" if @@trains.key?(number.to_sym)
-    true
   end
 
   private

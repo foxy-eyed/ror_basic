@@ -1,9 +1,12 @@
 class Wagon
   include Vendor
+  include Validation
 
   DIMENSIONS = { passenger: "количество мест", cargo: "объём" }.freeze
 
   attr_reader :capacity, :type, :occupied
+
+  validate :capacity, :positive_number
 
   def self.dimension(type)
     DIMENSIONS[type]
@@ -24,17 +27,5 @@ class Wagon
 
   def available?(required)
     available >= required
-  end
-
-  def valid?
-    validate!
-  rescue
-    false
-  end
-
-  protected
-
-  def validate!
-    raise "Вместимость должна быть больше нуля!" unless capacity > 0
   end
 end

@@ -157,7 +157,7 @@ class Controller
   def create_train!(type, number)
     raise "Некорректный тип поезда!" unless [1, 2].include?(type)
     train = type == 1 ? CargoTrain.new(number) : PassengerTrain.new(number)
-    puts "#{train.number} создан."
+    puts "Поезд #{train.number} создан."
     train
   end
 

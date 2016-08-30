@@ -1,15 +1,11 @@
 class Route
+  include Validation
+
   attr_reader :stations
 
   def initialize(start, finish)
     @stations = [start, finish]
     validate!
-  end
-
-  def valid?
-    validate!
-  rescue
-    false
   end
 
   def include(station)
@@ -39,15 +35,6 @@ class Route
 
   def to_s
     "«#{stations.first} — #{stations.last}»"
-  end
-
-  protected
-
-  def validate!
-    stations.each_with_index do |station, i|
-      raise "Объект #{i + 1} в маршруте не станция!" unless station.is_a?(Station)
-    end
-    true
   end
 
   private

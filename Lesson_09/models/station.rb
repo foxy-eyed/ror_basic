@@ -1,11 +1,14 @@
 class Station
   include InstanceCounter
+  include Validation
 
   NAME_PATTERN = /^[[:alpha:]]{1}[[:print:]]{2,19}$/
 
   @@stations = {}
 
   attr_reader :name, :trains
+
+  validate :name, :format, NAME_PATTERN
 
   def self.find(name)
     @@stations[name.to_sym]
@@ -21,12 +24,6 @@ class Station
     validate!
     register_instance
     @@stations[name.to_sym] = self
-  end
-
-  def valid?
-    validate!
-  rescue
-    false
   end
 
   def let_in(train)
@@ -49,14 +46,5 @@ class Station
 
   def to_s
     name.to_s
-  end
-
-  protected
-
-  def validate!
-    if NAME_PATTERN.match(name).nil?
-      raise "Название должно начинаться с буквы, длина 3..20!"
-    end
-    raise "Станция с таким именем уже есть" if @@stations.key?(name.to_sym)
   end
 end

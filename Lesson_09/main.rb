@@ -1,11 +1,13 @@
 require_relative 'controllers/controller'
-require_relative 'modules/vendor'
+require_relative 'modules/accessors'
 require_relative 'modules/instance_counter'
+require_relative 'modules/validation'
+require_relative 'modules/vendor'
+require_relative 'models/station'
 require_relative 'models/cargo_wagon'
 require_relative 'models/cargo_train'
 require_relative 'models/passenger_train'
 require_relative 'models/passenger_wagon'
-require_relative 'models/station'
 
 data = {
   trains: [
