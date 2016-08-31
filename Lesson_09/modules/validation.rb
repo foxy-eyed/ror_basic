@@ -27,31 +27,28 @@ module Validation
     end
 
     protected
-    
+
     def validate!
       self.class.rules.each do |_key, rule|
-        send(rule[:validator], *rule[:args])
+        value = instance_variable_get("@#{rule[:args].first}")
+        send(rule[:validator], value, *rule[:args])
       end
     end
 
-    def get_val(name)
-      instance_variable_get("@#{name}")
+    def presence(val, name)
+      raise "Атрибут #{name} обязателен!" if val.nil? || val.empty?
     end
 
-    def presence(name)
-      raise "Атрибут #{name} обязателен!" if get_val(name).nil? || get_val(name).empty?
+    def format(val, name, pattern)
+      raise "Недопустимый формат #{name}!" if pattern.match(val).nil?
     end
 
-    def format(name, pattern)
-      raise "Недопустимый формат #{name}!" if pattern.match(get_val(name)).nil?
+    def type(val, name, type)
+      raise "Атрибут #{name} должен иметь тип #{type}!" unless val.is_a?(type)
     end
 
-    def type(name, type)
-      raise "Атрибут #{name} должен иметь тип #{type}!" unless get_val(name).is_a?(type)
-    end
-
-    def positive_number(name)
-      raise "Атрибут #{name} должен быть больше нуля!" unless get_val(name) > 0
+    def positive_number(val, name)
+      raise "Атрибут #{name} должен быть больше нуля!" unless val > 0
     end
   end
 end
